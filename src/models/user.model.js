@@ -49,7 +49,7 @@ userSchema.methods.comparePassword = async function(enteredPasswod){
 }
 
 //Set JWT Token
-userSchema.methods.getJWTtoken = async function{
+userSchema.methods.getJWTtoken = async function() {
     JWT.sign({id : this._id}, config.JWT_SECRET, {
         expiresIn : config.JWT_EXPIRY
     })
