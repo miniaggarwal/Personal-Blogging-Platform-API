@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
 const userSchema = new mongoose.Schema ({
-    _id : mongoose.Schema.Types.ObjectId,
     uname : {
         type : String,
         required : true,
@@ -44,13 +43,13 @@ userSchema.pre("save", async function(next){
 });
 
 
-userSchema.methods.comparePassword = async function(enteredPasswod){
-    return await bcrypt.compare(this.password, enteredPasswod)
-}
-
+userSchema.methods.comparePassword = function (enteredPassword) {
+    return bcrypt.compare(enteredPassword, this.password);
+};
 //Set JWT Token
+
 userSchema.methods.getJWTtoken = async function() {
-    JWT.sign({id : this._id}, config.JWT_SECRET, {
+    return JWT.sign({id : this._id}, config.JWT_SECRET, {
         expiresIn : config.JWT_EXPIRY
     })
 };
@@ -64,13 +63,13 @@ userSchema.methods.generateForgotPasswordToken = async function () {
     .update(forgotToken).digest("hex")
 
     //Expiry Time
-    this.forgotPasswordExpiry = Date.now() * 20 * 60 * 1000;
+    this.forgotPasswordExpiry = Date.now() + 20 * 60 * 1000;
 
     return forgotToken;
 
 }
 
-module.export = mongoose.model("User", userSchema)
+export default mongoose.model("User", userSchema);
 
 
 
